@@ -5,7 +5,7 @@ services:
     image: rabbitmq:3-management
     healthcheck:
       test: ["CMD-SHELL", "rabbitmqctl status"]
-      interval: 30s
+      interval: 10s
       timeout: 10s
       retries: 5
 
