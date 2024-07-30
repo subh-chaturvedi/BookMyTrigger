@@ -8,15 +8,26 @@ from django.core.mail import send_mail
 from django.utils import timezone
 
 
-@shared_task
-def send_email_notification(user_email, subject, message):
-    send_mail(
-        subject,
-        message,
-        'subhchaturvedi55@gmail.com',  # From email address
-        [user_email],  # To email address
-        fail_silently=False,
-    )
+# @shared_task
+# def send_email_notification(user_email, subject, message):
+#     print("mail sending!!!!")
+#     send_mail(
+#         subject,
+#         message,
+#         'subhchaturvedi55@gmail.com',  # From email address
+#         [user_email],  # To email address
+#         fail_silently=False,
+    # )
+
+from django.db.models import Q
+
+def send_trigger_email(trigger, current_price):
+    subject = 'BTC Trigger Alert'
+    message = f'The trigger value of {trigger.value} has been reached. Current BTC price is {current_price}.'
+    recipient_list = [trigger.user.email]
+    send_mail(subject, message, 'from@example.com', recipient_list)
+    print(f'Email sent to {trigger.user.email} for trigger {trigger.id}')
+
 
 @shared_task
 def start_websocket():
@@ -29,40 +40,19 @@ def start_websocket():
         # Store the current price in the database
         BTCPrice.objects.create(price=price, timestamp=timezone.now())
 
-        # Fetch the last stored price
-        last_price_entry = BTCPrice.objects.last()
-        last_price = last_price_entry.price if last_price_entry else None
+        # Define conditions for triggers that need to be updated
+        greater_condition = Q(comparison='greater', value__lte=price, status='created')
+        lower_condition = Q(comparison='lower', value__gte=price, status='created')
 
+        # Find triggers that need to be triggered
+        triggers_to_trigger = Trigger.objects.filter(greater_condition | lower_condition)
 
-        #Function to check if the change in price needs to alert any set triggers
-        def checkIfTrigger(curr,new,old):
-            # print("DEBUG","triggcheck",curr,new,old)
+        for trigger in triggers_to_trigger:
+            send_trigger_email(trigger, price)
+        
+        # Update the status of the triggered triggers in bulk
+        Trigger.objects.filter(id__in=triggers_to_trigger.values_list('id', flat=True)).update(status='triggered')
 
-            Diff = [old,new]
-            Diff.sort()
-
-            if curr>=Diff[0] and curr<=Diff[1]:
-                return True
-            else:
-                return False
-            
-        # print("checking for", price,last_price)
-        if last_price is not None:
-
-            triggers = Trigger.objects.all()
-            for trigger in triggers:
-                if (trigger.status != 'triggered') and ((checkIfTrigger(trigger.value,price,last_price) and trigger.status == 'created')):
-                    print(f"Alert! {trigger.user.username} - BTC price has reached the trigger value of {trigger.value}.")
-
-                    alert_message = f"Alert! {trigger.user.username} - BTC price has reached the trigger value of {trigger.value}."
-
-
-                    # Send email notification to the user
-                    send_email_notification.delay(trigger.user.email, 'BTC Price Alert', alert_message)
-
-
-                    trigger.status = 'triggered'
-                    trigger.save()
 
     def on_error(ws, error):
         print(f"Error: {error}")

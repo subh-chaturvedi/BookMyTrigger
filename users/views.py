@@ -64,11 +64,25 @@ class TriggerListCreate(generics.ListCreateAPIView):
     serializer_class = TriggerSerializer
     permission_classes = [IsAuthenticated]
 
+
     def get_queryset(self):
         return Trigger.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        user = self.request.user
+        value = self.request.data.get('value')
+        
+        # Fetch the current BTC price from the database
+        try:
+            current_price = BTCPrice.objects.latest('timestamp').price
+        except BTCPrice.DoesNotExist:
+            return Response({"error": "BTC price not available"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Determine if the trigger is greater or lower than the current price
+        comparison = 'greater' if float(value) > current_price else 'lower'
+
+        serializer.save(user=user, comparison=comparison)
+
 
 class TriggerDelete(APIView):
     permission_classes = [IsAuthenticated]
@@ -142,11 +156,22 @@ def create_trigger(request):
         if form.is_valid():
             trigger = form.save(commit=False)
             trigger.user = request.user
+
+            # Fetch the current BTC price from the database
+            try:
+                current_price = BTCPrice.objects.latest('timestamp').price
+            except BTCPrice.DoesNotExist:
+                return render(request, 'create_trigger.html', {'form': form, 'error': 'BTC price not available'})
+
+            # Determine if the trigger is greater or lower than the current price
+            comparison = 'greater' if trigger.value > current_price else 'lower'
+            trigger.comparison = comparison
             trigger.save()
             return redirect('triggers')
     else:
         form = TriggerForm()
     return render(request, 'create_trigger.html', {'form': form})
+
 
 @login_required
 def delete_trigger(request, trigger_id):

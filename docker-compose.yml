@@ -49,6 +49,7 @@ services:
     command: celery -A alerter worker --loglevel=info --concurrency=1 #further testing required to see if only one celery worker is enough
     volumes:
       - .:/app
+    restart: on-failure
     env_file:
       - .env
     depends_on:
