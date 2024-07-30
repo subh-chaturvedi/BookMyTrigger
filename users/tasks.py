@@ -22,6 +22,7 @@ def send_email_notification(user_email, subject, message):
 def start_websocket():
     def on_message(ws, message):
         data = json.loads(message)
+        # print("DATA SAMPLE",data)
         price = float(data['k']['c'])
         print(f"Current BTC price: {price}")
 
@@ -35,6 +36,8 @@ def start_websocket():
 
         #Function to check if the change in price needs to alert any set triggers
         def checkIfTrigger(curr,new,old):
+            # print("DEBUG","triggcheck",curr,new,old)
+
             Diff = [old,new]
             Diff.sort()
 
@@ -43,7 +46,7 @@ def start_websocket():
             else:
                 return False
             
-
+        # print("checking for", price,last_price)
         if last_price is not None:
 
             triggers = Trigger.objects.all()

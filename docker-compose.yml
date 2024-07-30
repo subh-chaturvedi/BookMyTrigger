@@ -1,6 +1,14 @@
 version: '3.8'
 
 services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmqctl status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
   db:
     image: postgres:13
     env_file:
@@ -15,8 +23,6 @@ services:
   redis:
     image: redis:alpine
 
-  rabbitmq:
-    image: rabbitmq:3-management
     ports:
       - "15672:15672"
       - "5672:5672"
@@ -40,7 +46,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.celery
-    command: celery -A alerter worker --loglevel=info
+    command: celery -A alerter worker --loglevel=info --concurrency=1 #further testing required to see if only one celery worker is enough
     volumes:
       - .:/app
     env_file:
