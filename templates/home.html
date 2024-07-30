@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}BTC Price Chart{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center">BTC Price Chart</h1>
+    <div class="tradingview-widget-container">
+        <div id="tradingview_btc"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+        <script type="text/javascript">
+        new TradingView.widget(
+            {
+            "width": 980,
+            "height": 610,
+            "symbol": "BINANCE:BTCUSDT",
+            "interval": "D",
+            "timezone": "Etc/UTC",
+            "theme": "light",
+            "style": "1",
+            "locale": "en",
+            "toolbar_bg": "#f1f3f6",
+            "enable_publishing": false,
+            "allow_symbol_change": true,
+            "container_id": "tradingview_btc"
+            }
+        );
+        </script>
+    </div>
+</div>
+{% endblock %}

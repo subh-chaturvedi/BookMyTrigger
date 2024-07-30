@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Trigger{% endblock %}
+
+{% block content %}
+<h2>Are you sure you want to delete this trigger?</h2>
+<p>{{ trigger.value }} - {{ trigger.status }}</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Yes, delete</button>
+    <a href="{% url 'triggers' %}">Cancel</a>
+</form>
+{% endblock %}

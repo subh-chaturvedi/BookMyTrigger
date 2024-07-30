@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Your Triggers{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2 class="text-center">Welcome, {{ user.username }}!</h2>
+        <h3>Your Triggers</h3>
+        <a href="{% url 'create_trigger' %}" class="btn btn-success mb-3">Create a new trigger</a>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Value</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for trigger in triggers %}
+                <tr>
+                    <td>{{ trigger.value }}</td>
+                    <td>{{ trigger.status }}</td>
+                    <td>
+                        <form method="post" action="{% url 'delete_trigger' trigger.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">&times;</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
