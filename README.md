@@ -65,10 +65,12 @@ docker-compose exec web python manage.py createsuperuser
 - **TradingView** : For embeddable financial charts.
  
 - **Redis** : Caching layer for API responses.
+  
+- **Docker** : Containerization of the application and services.
 
 ## System Architecture 
 
-*Picture here.* 
+![bmt](https://github.com/user-attachments/assets/46c901d7-abbc-40a9-a2b4-9bdadb71f1c0)
  
 1. **Django Application** :
   - Handles user authentication using JWT, trigger management, and API endpoints.
@@ -99,8 +101,18 @@ docker-compose exec web python manage.py createsuperuser
   - Also used for caching API responses to reduce database load and improve performance.
 
   - Stores task results for quick access and real-time monitoring of task statuses.
+
+7. **Docker** :
+  - Containerizes the application and its dependencies for consistency across different environments.
+
+  - Simplifies the setup and deployment process.
  
-7. **Frontend Interface** :
+8. **Docker Compose** :
+  - Defines and runs multi-container Docker applications.
+
+  - Orchestrates the various services (Django, PostgreSQL, RabbitMQ, Redis) required by the application.
+ 
+9. **Frontend Interface** :
   - Allows users to log in, view, create, and delete triggers.
 
   - Displays a BTC price chart using TradingView or Matplotlib-generated images.
@@ -291,8 +303,8 @@ The system monitors Bitcoin (BTC) price in real-time using Binance WebSocket. Al
   - **Email Notification** : Sends email notifications to users using Celery and RabbitMQ.
 
 ### Email Notification System 
+![Email Alert Example](https://github.com/user-attachments/assets/80c4098e-52e8-4792-9f22-9bd91760891b)
 
-*email image*
  
 1. **Celery Worker** : Handles background tasks, such as sending email notifications, asynchronously.
  
@@ -306,8 +318,6 @@ The system monitors Bitcoin (BTC) price in real-time using Binance WebSocket. Al
 ## Frontend 
 
 ### User Interface 
-
-*another image*
  
 - **Triggers Management** : Users can view, create, and delete triggers through the front-end.
  
