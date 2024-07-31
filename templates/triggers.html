@@ -20,12 +20,18 @@
                 {% for trigger in triggers %}
                 <tr>
                     <td>{{ trigger.value }}</td>
-                    <td>{{ trigger.status }}</td>
                     <td>
+                        <span class="{% if trigger.status == 'created' %}badge badge-primary{% elif trigger.status == 'deleted' %}badge badge-secondary{% elif trigger.status == 'triggered' %}badge badge-success{% else %}badge badge-warning{% endif %}">
+                            {{ trigger.status }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if trigger.status != 'deleted' %}
                         <form method="post" action="{% url 'delete_trigger' trigger.id %}" style="display:inline;">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger btn-sm">&times;</button>
                         </form>
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}
