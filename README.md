@@ -17,8 +17,8 @@ This is a trigger management system for cryptocurrencies/stocks/commodities, bui
 1. **Clone the Repository** 
 
 ```bash
-git clone <https://github.com/subh-chaturvedi/BookMyTrigger>
-cd <BookMyTrigger>
+git clone https://github.com/subh-chaturvedi/BookMyTrigger
+cd BookMyTrigger
 ```
  
 2. **Build and Start Docker Containers** 
