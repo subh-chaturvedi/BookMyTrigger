@@ -10,8 +10,8 @@ WORKDIR /app
 
 # Install dependencies.
 COPY . /app/
-RUN pip install --no-cache-dir -r requirements.txt
-# RUN sudo pip install --no-cache-dir -r requirements.txt
+# RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 # Expose the port that the app runs on.
 EXPOSE 8000
