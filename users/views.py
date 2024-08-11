@@ -101,11 +101,11 @@ class TriggerListView(generics.ListAPIView):
 
     def get_queryset(self):
         status = self.request.query_params.get('status')
-        # cache_key = 'triggers_status_{}'.format(status if status else 'all')
-        # cached_data = cache.get(cache_key)
+        cache_key = 'triggers_status_{}'.format(status if status else 'all')
+        cached_data = cache.get(cache_key)
 
-        # if cached_data is not None:
-        #     return cached_data
+        if cached_data is not None:
+            return cached_data
 
         queryset = Trigger.objects.all()
         if status:
@@ -114,11 +114,11 @@ class TriggerListView(generics.ListAPIView):
         page = self.paginate_queryset(queryset)
         if page is not None:
             serialized_data = self.get_serializer(page, many=True).data
-            # cache.set(cache_key, serialized_data, timeout=60*15)  # Cache timeout: 15 minutes
+            cache.set(cache_key, serialized_data, timeout=60*15)  # Cache timeout: 15 minutes
             return page
         
         serialized_data = self.get_serializer(queryset, many=True).data
-        # cache.set(cache_key, serialized_data, timeout=60*15)
+        cache.set(cache_key, serialized_data, timeout=60*15)
         return queryset
 
 
