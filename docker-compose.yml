@@ -20,6 +20,16 @@ services:
       POSTGRES_USER: myuser
       POSTGRES_PASSWORD: mypassword
 
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: abc@abc.com
+      PGADMIN_DEFAULT_PASSWORD: abc
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+
   redis:
     image: redis:alpine
 
