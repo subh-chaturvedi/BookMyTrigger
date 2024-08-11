@@ -7,6 +7,9 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
+    ports:
+      - "5672:5672"    # AMQP port
+      - "15672:15672"  # Management UI port
 
   db:
     image: postgres:13
