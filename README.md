@@ -49,6 +49,8 @@ docker-compose exec web python manage.py createsuperuser
   - **Django Application** : `http://localhost:8000`
  
   - **RabbitMQ Management Interface** : `http://localhost:15672` (username: `guest`, password: `guest`)
+    
+  - **PgAdmin** : `http://localhost:8080` (email: `abc@abc.com`, password: `abc`)
 
 ## Technologies Used 
  
